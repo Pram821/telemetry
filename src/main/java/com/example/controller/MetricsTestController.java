@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/api")
@@ -31,7 +30,6 @@ public class MetricsTestController {
         this.meterRegistry = meterRegistry;
         this.demoService = demoService;
 
-        // Create custom metrics
         this.requestCounter = Counter.builder("api.requests.total")
                 .description("Total number of API requests")
                 .tag("controller", "metrics")
