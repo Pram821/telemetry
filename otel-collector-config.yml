@@ -1,0 +1,51 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  batch:
+    timeout: 1s
+    send_batch_size: 1024
+  memory_limiter:
+    limit_mib: 128
+    check_interval: 1s
+
+exporters:
+  # OpenObserve for traces
+  otlphttp/openobserve:
+    endpoint: http://openobserve:5080/api/default/traces
+    headers:
+      Authorization: "Basic YWRtaW5AZXhhbXBsZS5jb206YWRtaW4xMjM="
+      stream-name: "default"
+  
+  # OpenObserve for logs
+  otlphttp/openobserve-logs:
+    endpoint: http://openobserve:5080/api/default/logs
+    headers:
+      Authorization: "Basic YWRtaW5AZXhhbXBsZS5jb206YWRtaW4xMjM="
+      stream-name: "default"
+  
+  # Keep Tempo for comparison
+  otlp/tempo:
+    endpoint: tempo:4317
+    tls:
+      insecure: true
+      
+  logging:
+    verbosity: detailed
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [otlphttp/openobserve, otlp/tempo, logging]
+    
+    logs:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [otlphttp/openobserve-logs, logging]

@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: otel-demo-app
+  # IMPORTANT: Exclude OpenTelemetry auto-configuration to avoid conflicts
+  autoconfigure:
+    exclude:
+      - io.opentelemetry.instrumentation.spring.autoconfigure.OpenTelemetryAutoConfiguration
+
+# Server Configuration
+server:
+  port: 8080
+
+# Actuator & Management Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        # Explicitly include prometheus
+        include: prometheus,health,info,metrics
+      base-path: /actuator
+  endpoint:
+    prometheus:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+
+# Logging Configuration
+logging:
+  level:
+    root: INFO
+    com.example: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - [%X{traceId:-},%X{spanId:-}] - %5p --- [%15.15t] %-40.40logger{39} : %m%n"

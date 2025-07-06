@@ -1,0 +1,7 @@
+runtime: java17
+entrypoint: java -jar otel-demo-0.0.1-SNAPSHOT.jar
+instance_class: F1
+
+handlers:
+  - url: /.*
+    script: auto
