@@ -1,3 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: otel-demo-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: otel-demo
+  template:
+    metadata:
+      labels:
+        app: otel-demo
+    spec:
+      containers:
+        - name: otel-demo
+          image: us-central1-docker.pkg.dev/atomic-snow-462306-r1/otel-repo/otel-demo-app
+          ports:
+            - containerPort: 8080
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -7,5 +27,6 @@ spec:
   selector:
     app: otel-demo
   ports:
-    - port: 80
+    - protocol: TCP
+      port: 80
       targetPort: 8080
